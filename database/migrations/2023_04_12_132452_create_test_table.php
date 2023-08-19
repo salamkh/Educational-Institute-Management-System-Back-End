@@ -17,7 +17,7 @@ class CreateTestTable extends Migration
             $table->bigIncrements('testId');
             $table->unsignedBigInteger('studentId');
             $table->unsignedBigInteger('sessionId');
-            $table->unsignedBigInteger('teacherId');
+            $table->unsignedBigInteger('userId');
             $table->unsignedBigInteger('courseId');
 
             $table->integer('value');
@@ -34,9 +34,9 @@ class CreateTestTable extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->foreign('teacherId')
-                ->references('tId')
-                ->on('teacher')
+            $table->foreign('userId')
+                ->references('userId')
+                ->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->foreign('courseId')

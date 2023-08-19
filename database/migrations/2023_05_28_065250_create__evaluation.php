@@ -16,7 +16,7 @@ class CreateEvaluation extends Migration
         Schema::create('evaluation', function (Blueprint $table) {
             $table->bigIncrements('evaluationId');
             $table->unsignedBigInteger('studentId');
-            $table->unsignedBigInteger('teacherId');
+            $table->unsignedBigInteger('userId');
             $table->unsignedBigInteger('courseId');
             $table->string('cause')->nullable();
             $table->string('behavior');
@@ -28,9 +28,9 @@ class CreateEvaluation extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->foreign('teacherId')
-                ->references('tId')
-                ->on('teacher')
+            $table->foreign('userId')
+                ->references('userId')
+                ->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->foreign('courseId')

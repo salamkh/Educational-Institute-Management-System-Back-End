@@ -209,7 +209,7 @@ class tableColumnsController extends Controller
             $columns = [];
             for ($j = 0; $j < sizeof($tableColumns); $j++) {
                 if ($tableColumns[$j]->dataType != "enum") {
-                    if ($tableColumns[$j]->EnglishName == "userId" || $tableColumns[$j]->EnglishName == "imageIdentity") {
+                    if ($tableColumns[$j]->EnglishName == "userId") {
                         $columns[$j] = [
                             "arabicName" => $tableColumns[$j]->arabicName,
                             "EnglishName" => $tableColumns[$j]->EnglishName,
@@ -232,7 +232,7 @@ class tableColumnsController extends Controller
                     for ($i = 0; $i < sizeof($enum); $i++) {
                         $s[$i] = trim($enum[$i], "'");
                     }
-                    if ($tableColumns[$j]->EnglishName == "userId" || $tableColumns[$j]->EnglishName == "accountStatus" ||$tableColumns[$j]->EnglishName =="imageIdentity") {
+                    if ($tableColumns[$j]->EnglishName == "userId" || $tableColumns[$j]->EnglishName == "accountStatus") {
                         $columns[$j] = [
                             "arabicName" => $tableColumns[$j]->arabicName,
                             "EnglishName" => $tableColumns[$j]->EnglishName,
@@ -326,7 +326,7 @@ class tableColumnsController extends Controller
             $tableColumns = tableColumns::where('tableId', $dynamicTable->tableId)->get();
             $columns = [];
             for ($j = 0; $j < sizeof($tableColumns); $j++) {
-                    if ($tableColumns[$j]->EnglishName == "userId" || $tableColumns[$j]->EnglishName == "imageIdentity") {
+                    if ($tableColumns[$j]->EnglishName == "userId") {
                         $columns[$j] = [
                             "arabicName" => $tableColumns[$j]->arabicName,
                             "EnglishName" => $tableColumns[$j]->EnglishName,

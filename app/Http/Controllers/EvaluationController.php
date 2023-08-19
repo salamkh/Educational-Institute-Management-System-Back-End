@@ -23,10 +23,9 @@ class EvaluationController extends Controller
 
         if (!$evaluation) {
             $user = JWTAuth::parseToken()->authenticate();
-            $teacher = teacher::where('userId',$user->userId)->get()->first();
             $evaluation = new Evaluation();
             $evaluation->studentId = $request->studentId;
-            $evaluation->teacherId = $teacher->tId;
+            $evaluation->userId = $user->userId;
             $evaluation->courseId = $request->courseId;
             $evaluation->behavior = $request->behavior;
             $evaluation->cause = $request->cause;
@@ -64,8 +63,7 @@ class EvaluationController extends Controller
             $students[$i] = Student::where('studentId', $evaluation[$i]->studentId)->get()->first();
             $students[$i]->behavior =  $evaluation[$i]->behavior;
             $students[$i]->cause =  $evaluation[$i]->cause;
-            $teacher = teacher::find($evaluation[$i]->teacherId);
-            $teacher = User::find($teacher->userId);
+            $teacher = User::find($evaluation[$i]->userId);
             $students[$i]->teacher = $teacher->name;
             $students[$i]->value =  $evaluation[$i]->value;
         }

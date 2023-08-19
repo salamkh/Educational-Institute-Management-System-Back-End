@@ -94,6 +94,7 @@ class financialUsersOperationsController extends Controller
                         $allData = [];
                         if (sizeof($data) == 0) {
                             $allData['total'] = 0;
+                            $allData['data'] = [];
                             return response(["data" => $allData, "message" => "لم يقم الاستاذ بأي جلسة خلال المدة المطلوبة"]);
                         } else {
                             $allData['total'] = $total;
@@ -101,7 +102,9 @@ class financialUsersOperationsController extends Controller
                             return response(["data" => $allData, "message" => "تم احضار البيانات بنجاح"]);
                         }
                     } else {
-                        return response(["message" => "تعذر الوصل للبيانات لم يتم إيجاد الحساب"]);
+                        $allData['total'] = 0;
+                        $allData['data'] = [];
+                        return response(["data" => $allData,"message" => "تعذر الوصل للبيانات لم يتم إيجاد الحساب"]);
                     }
                 } else {
                     return response(["message" => "تعذر الوصل للبيانات لم يتم إيجاد الحساب"]);

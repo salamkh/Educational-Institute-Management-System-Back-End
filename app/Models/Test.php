@@ -15,7 +15,7 @@ class Test extends Model
         'testId',
         'studentId',
         'sessionId',
-        'teacherId',
+        'userId',
         'value',
         'cause'
     ];

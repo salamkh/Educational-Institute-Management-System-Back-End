@@ -140,8 +140,9 @@ class advanceController extends Controller
     }
     public function showUserAdvancesInRange($id){
           $advance = advance::where('userId',$id)->where('status',"مدفوعة")->orderBy('advancedDate')->get();
+          $data=[];
           if(sizeof($advance)!=0){
-            $data=[];
+            
             for ($i=0;$i<sizeof($advance);$i++){
                 $user = User::find($advance[$i]->userId);
                 $data[$i]=[
@@ -151,22 +152,32 @@ class advanceController extends Controller
             }
             return response(["data"=>$data,"message"=>"تم احضار البيانات بنجاح"]);
           }
-          return response(["message"=>"لا يوجد بينانات لعرضها"]);
+          return response(["data"=>$data,"message"=>"لا يوجد بينانات لعرضها"]);
     }
-    public function changeAdvanceStatus($id){
+    public function changeAdvanceStatus($id , Request $request){
+        $message = array(
+            "status.required"=>"حالة السلفة مطلوبة"
+        );
+        $validator = Validator::make(request()->all(), [
+            "status"=>"required"
+         ],$message);
+         if ($validator->fails()) {
+            $msg = (json_decode(json_encode( $validator->errors(),JSON_UNESCAPED_UNICODE),true));
+            $string='';
+          foreach (array_values($msg) as $value){
+              $string .=  $value[0]." , ";
+          }
+              return response(["message"=>"$string"], 422); 
+          }
+          if ($request->status != "مدفوعة" && $request->status != "مستردة"){
+            return response(["message"=>"حالة السلفة يجب أن تكون مدفوعة أو مستردة"], 422); 
+          }
           $advance = advance::find($id);
           if ($advance){
-            if($advance->status=="مدفوعة"){
-                $advance->status="مستردة";
-            }
-            else{
-                if($advance->status=="مستردة"){
-                    $advance->status="مدفوعة";
-                }
-            }
+            $advance->status=$request->status;
             $advance->update();
             return response(["message"=>"تم تعديل الحالة بنجاح"]);
           }
-          return response(["message"=>"فشل عملية التعديل السلفة غير موجودة"]);
+          return response(["message"=>"فشل عملية التعديل"]);
     }
 }

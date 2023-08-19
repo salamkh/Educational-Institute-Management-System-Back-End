@@ -31,6 +31,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SessionStudentMonitoringController;
 use App\Http\Controllers\tableColumnsController;
 use App\Http\Controllers\TestController;
+
 //hr section
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register'])->middleware('jwt_aut')->middleware('addUsers');
@@ -102,6 +103,8 @@ Route::get('get_employees_names', [accountsManagement::class, 'getEmpNames'])->m
 Route::post('getAlternativeTeacherForDay/{id}', [teachersController::class, 'getAlternativeTeachers'])->middleware('jwt_aut');
 Route::get('get_teachers_names', [accountsManagement::class, 'getTeachersNames'])->middleware('jwt_aut');
 Route::get('get_user_retired/{id}', [accountsManagement::class, 'showUserRetierd'])->middleware('jwt_aut')->middleware('showUsers');
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //learning section
 Route::post('/createMyClass', [MyClassController::class, 'createMyClass'])
@@ -267,7 +270,7 @@ Route::post('/deleteAdvertisment/{id}', [AdvertismentController::class, 'destroy
 
 
 Route::post(
-    '/sendMessage/{id1}/{id2}/{id3}',
+    '/sendMessage',
     [SendSMSController::class, 'sendMessage']
 );
 Route::get(
@@ -337,7 +340,7 @@ Route::post('get_Teacher_Salary/{id}', [financialUsersOperationsController::clas
 Route::post('Financial_Operations_In_Range', [financialOperationsController::class, 'getFinancialOperationsInRange'])->middleware(['jwt_aut', 'showFinancialOperation']);
 Route::post('Financial_Operations_On_Account_In_Range/{id}', [financialOperationsController::class, 'getFinancialOperationsOnAccountInRange'])->middleware(['jwt_aut', 'showFinancialOperation']);
 Route::get('students_depts_in_type/{id}', [financialStudentOperationController::class, 'showStudentDeptsInType'])->middleware(['jwt_aut', 'showFinancialOperation']);
-Route::get('show_Student_Operation_For_Type',[financialStudentOperationController::class,'showStudentOperationForType'])->middleware(['jwt_aut', 'showFinancialOperation']);
+Route::post('show_Student_Operation_For_Type',[financialStudentOperationController::class,'showStudentOperationForType'])->middleware(['jwt_aut', 'showFinancialOperation']);
 Route::get('show_actually_result',[financialPeriodController::class,'getResult'])->middleware(['jwt_aut']);
 
 //metaData
@@ -357,4 +360,9 @@ Route::delete('delete_domain_from_pricing_plan/{id}', [pricingPlanController::cl
 Route::get('show_courses_to_add_to_courses',[pricingPlanController::class, "getCoursesToAddToPlan"]);
 Route::post('add_course_to_plan', [pricingPlanController::class, "addCourseToPlan"])->middleware(['jwt_aut', 'editPricingPlan']);
 Route::post('delete_course_from_plan', [pricingPlanController::class, "deleteCoursefromPlan"])->middleware(['jwt_aut', 'editPricingPlan']);
+
+
+
+
+
 

@@ -15,7 +15,7 @@ class Evaluation extends Model
         'evaluationId',
         'studentId',
         'courseId',
-        'teacherId',
+        'userId',
         'cause',
         'behavior',
         'value',

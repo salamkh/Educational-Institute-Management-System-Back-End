@@ -15,7 +15,7 @@ class FinancailAccount extends Migration
     {
         Schema::create('financialAccount', function (Blueprint $table) {
             $table->bigIncrements('FAId');
-            $table->unique('accountName');
+            $table->string('accountName')->unique();
             $table->enum('status', array('خصوم','أصول','مصاريف','إيرادات'));
             $table->integer('balance');
             $table->timestamps();

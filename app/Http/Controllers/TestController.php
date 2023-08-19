@@ -18,12 +18,11 @@ class TestController extends Controller
     public function create(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        $teacher = teacher::where('userId', $user->userId)->get()->first();
         $test = Test::where('sessionId', $request->sessionId)->where('studentId', $request->studentId)->get()->first();
         if (!$test) {
             $test = new Test();
             $test->sessionId = $request->sessionId;
-            $test->teacherId = $teacher->tId;
+            $test->userId = $user ->userId;
             $test->studentId = $request->studentId;
             $test->value = $request->value;
             $test->cause = $request->cause;
@@ -31,7 +30,7 @@ class TestController extends Controller
             $test->save();
         } else {
             $test->sessionId = $request->sessionId;
-            $test->teacherId = 8;
+            $test->userId = $user->userId;
             $test->studentId = $request->studentId;
             $test->value = $request->value;
             $test->cause = $request->cause;
@@ -83,9 +82,8 @@ class TestController extends Controller
                 for ($j = 0; $j < sizeof($test); $j++) {
                     if ($studentsTest[$i]->studentId == $test[$j]->studentId) {
                         $studentsTest[$i]->testId = $test[$j]->testId;
-                        $studentsTest[$i]->teacherId = $test[$j]->teacherId;
-                        $teacher = teacher::find($test[$j]->teacherId);
-                        $teacher = User::find($teacher->userId);
+                        $studentsTest[$i]->userId = $test[$j]->userId;
+                        $teacher = User::find($test[$j]->userId);
                         $studentsTest[$i]->teacher = $teacher->name;
                         $studentsTest[$i]->value = $test[$j]->value;
                         $studentsTest[$i]->cause = $test[$j]->cause;
@@ -137,7 +135,7 @@ class TestController extends Controller
                 for ($j = 0; $j < sizeof($test); $j++) {
                     if ($studentsTest[$i]->studentId == $test[$j]->studentId) {
                         $studentsTest[$i]->testId = $test[$j]->testId;
-                        $studentsTest[$i]->teacherId = $test[$j]->teacherId;
+                        $studentsTest[$i]->userId = $test[$j]->userId;
                         $teacher = teacher::find($test[$j]->teacherId);
                         $teacher = User::find($teacher->userId);
                         $studentsTest[$i]->teacher = $teacher->name;
@@ -192,9 +190,8 @@ class TestController extends Controller
                 for ($j = 0; $j < sizeof($test); $j++) {
                     if ($studentsTest[$i]->studentId == $test[$j]->studentId) {
                         $studentsTest[$i]->testId = $test[$j]->testId;
-                        $studentsTest[$i]->teacherId = $test[$j]->teacherId;
-                        $teacher = teacher::find($test[$j]->teacherId);
-                        $teacher = User::find($teacher->userId);
+                        $studentsTest[$i]->userId = $test[$j]->userId;
+                        $teacher = User::find($test[$j]->userId);
                         $studentsTest[$i]->teacher = $teacher->name;
                         $studentsTest[$i]->value = $test[$j]->value;
                         $studentsTest[$i]->cause = $test[$j]->cause;
@@ -227,8 +224,7 @@ class TestController extends Controller
                 $sessions[$i]->testId = $test->testId;
                 $sessions[$i]->value = $test->value;
                 $sessions[$i]->cause = $test->cause;
-                $teacher = teacher::find($test->teacherId);
-                $teacher = User::find($teacher->userId);
+                $teacher = User::find($test->userId);
                 $sessions[$i]->teacher = $teacher->name;
             }
         }

@@ -144,8 +144,9 @@ class panchmentController extends Controller
     }
     public function showUserPanchentInRange($id){
           $panchment = panchment::where('userId',$id)->where('status',"غير مطبقة")->orderBy('panchDate')->get();
+          $data=[];
           if(sizeof($panchment)!=0){
-            $data=[];
+            
             for ($i=0;$i<sizeof($panchment);$i++){
                 $user = User::find($panchment[$i]->userId);
                 $data[$i]=[
@@ -155,7 +156,7 @@ class panchmentController extends Controller
             }
             return response(["data"=>$data,"message"=>"تم احضار البيانات بنجاح"]);
           }
-          return response(["message"=>"لا يوجد بينانات لعرضها"]);
+          return response(["data"=>$data,"message"=>"لا يوجد بينانات لعرضها"]);
     
     }
     public function changePanchmentStatus($id){

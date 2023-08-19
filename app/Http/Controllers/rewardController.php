@@ -146,8 +146,9 @@ class rewardController extends Controller
     public function showUserRewardInRange($id)
     {
         $reward = reward::where('userId', $id)->where('status', "غير مصروفة")->orderBy('rewarddDate')->get();
+        $data = [];
         if (sizeof($reward) != 0) {
-            $data = [];
+           
             for ($i = 0; $i < sizeof($reward); $i++) {
                 $user = User::find($reward[$i]->userId);
                 $data[$i] = [
@@ -157,21 +158,33 @@ class rewardController extends Controller
             }
             return response(["data" => $data, "message" => "تم احضار البيانات بنجاح"]);
         }
-        return response(["message" => "لا يوجد بينانات لعرضها"]);
+        return response(["data" => $data,"message" => "لا يوجد بينانات لعرضها"]);
     }
-    public function changeٌRewardStatus($id)
+    public function changeٌRewardStatus($id, Request $request)
     {
+        $message = array(
+            "status.required" => "حالة المكافأة مطلوبة"
+        );
+        $validator = Validator::make(request()->all(), [
+            "status" => "required"
+        ], $message);
+        if ($validator->fails()) {
+            $msg = (json_decode(json_encode($validator->errors(), JSON_UNESCAPED_UNICODE), true));
+            $string = '';
+            foreach (array_values($msg) as $value) {
+                $string .=  $value[0] . " , ";
+            }
+            return response(["message" => "$string"], 422);
+        }
+        if ($request->status != "غير مصروفة" && $request->status != "مصروفة") {
+            return response(["message" => "حالة المكافأة يجب أن تكون مصروفة أو غير مصروفة"], 422);
+        }
         $reward = reward::find($id);
         if ($reward) {
-            if($reward->status == "مصروفة"){
-                $reward->status="غير مصروفة";
-            }
-            else{
-                $reward->status="مصروفة";
-            }
+            $reward->status = $request->status;
             $reward->update();
             return response(["message" => "تم تعديل الحالة بنجاح"]);
         }
-        return response(["message" => "فشل عملية التعديل لم يتم ايجاد المكافأة"]);
+        return response(["message" => "فشل عملية التعديل"]);
     }
 }
