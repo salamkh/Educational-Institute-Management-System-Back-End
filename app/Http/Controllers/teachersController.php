@@ -34,12 +34,12 @@ class teachersController extends Controller
             'name.required' => 'حقل الاسم مطلوب',
             'userName.required' => 'حقل اسم المستخدم مطلوب',
             'imageIdentity.required' => 'حقل صورة الهوية مطلوب',
+            'imageIdentity.numeric' => 'يجب أن يكون رقم الهوية أرقام فقط',
             'salary.numeric' => 'الراتب يجب أن يكون رقم',
-            // 'imageIdentity.required' => 'حقل صورة الهوية مطلوب',
+            'imageIdentity.required' => 'حقل رقم الهوية مطلوب',
             'password.min' => "يجب أن تتألف كلمة السر من 8 محارف على الأقل",
             'email.email' => 'حقل الايميل يجب أن يحوي على ايميل فقط',
             'address.required' => 'حقل العنوان   مطلوب',
-            'roles.required' => 'حقل الأدوار لا يجب أن يكون فارغ ',
             'password.required' => 'حقل كلمة السر مطلوب',
             'subjects.required' => 'حقل المواد لا يجب أن يكون فارغ',
             'certificate.required' => 'حقل الشهادة مطلوب',
@@ -50,9 +50,8 @@ class teachersController extends Controller
             "name" => "required",
             "userName" => "required",
             "phoneNumber" => "required|numeric|starts_with:09",
-            // "imageIdentity" => "required",
+            "imageIdentity" => "required|numeric",
             "address" => "required",
-            "roles" => "required|array",
             "password" => "required|min:8",
             "email" => "email",
             "permissions" => "array",
@@ -83,7 +82,7 @@ class teachersController extends Controller
         }
         $u = User::where('imageIdentity', $request->imageIdentity)->get()->first();
         if ($u) {
-            return response(["message" => "لا يمكن تكرار صورة الهوية لأكثر من حساب"]);
+            return response(["message" => "لا يمكن تكرار رقم الهوية لأكثر من حساب"]);
         }
         if ($request->email) {
             $u = User::where('email', $request->email)->get()->first();
@@ -112,26 +111,20 @@ class teachersController extends Controller
                 $additionalInfo[$tableColumns[$i]->EnglishName] = $request[$tableColumns[$i]->EnglishName];
             }
         }
-        //////////
-        $FileName = $request->imageIdentity;
-        if ($request->hasFile('imageIdentity')) {
-            $FileName =  $request->imageIdentity->getClientOriginalName();
-            Storage::disk('public')->putFileAs('/images', $request->imageIdentity, $FileName);
-        }
         DB::beginTransaction();
         $userID =  User::insertGetId(array_merge([
             'name' => $request->name,
             'email' => $request->email,
             'phoneNumber' => $request->phoneNumber,
             'userName' => $request->userName,
-             'imageIdentity' => $request->phoneNumber,
+            'imageIdentity' => $request->imageIdentity,
             'accountStatus' => "موظف",
             'address' => $request->address,
             'password' => bcrypt($request->password),
         ], $additionalInfo));
         if ($userID) {
-            $financialAccount = financialAccounts::where('accountName',$request->name . "-" . $request->userName)->get()->first();
-            if(!$financialAccount){
+            $financialAccount = financialAccounts::where('accountName', $request->name . "-" . $request->userName)->get()->first();
+            if (!$financialAccount) {
                 $financialAccount =  financialAccounts::insertGetId([
                     'status' => "مصاريف",
                     'accountName' => $request->name . "-" . $request->userName,
@@ -146,27 +139,32 @@ class teachersController extends Controller
                 } else {
                     DB::rollBack();
                 }
-            }
-            else{
+            } else {
                 DB::rollBack();
-                return response(["message" => " فشلت عملية التسجيل يرجى تغيير الاسم الكامل أو اسم المستخدم"]); 
+                return response(["message" => " فشلت عملية التسجيل يرجى تغيير الاسم الكامل أو اسم المستخدم"]);
             }
-        }
-        else{
+        } else {
             DB::rollBack();
             return response(["message" => "فشلت عملية التسجيل "]);
         }
         $u = User::find($userID);
         if ($u) {
-            for ($i = 0; $i < sizeof($request->roles); $i++) {
-                $role = role::find($request->roles[$i]);
-                if ($role) {
-                    $userrole = new userrole();
-                    $userrole->userId = $userID;
-                    $userrole->roleId = $request->roles[$i];
-                    $userrole->save();
+            if ($request->roles) {
+                for ($i = 0; $i < sizeof($request->roles); $i++) {
+                    $role = role::find($request->roles[$i]);
+                    if ($role) {
+                        $userrole = new userrole();
+                        $userrole->userId = $userID;
+                        $userrole->roleId = $request->roles[$i];
+                        $userrole->save();
+                    }
                 }
             }
+            $teacherRole = role::where('role', "أستاذ")->get()->first();
+                $userrole = new userrole();
+                $userrole->userId = $userID;
+                $userrole->roleId = $teacherRole->roleId;
+                $userrole->save();
             if ($request->permissions && sizeof($request->permissions) != 0) {
                 for ($i = 0; $i < sizeof($request->permissions); $i++) {
                     $per = authorization::find($request->permissions[$i]);

@@ -15,9 +15,10 @@ class CoruseStuNo extends Migration
     {
         Schema::create('corusestuno', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('courseIs');
+            $table->unsignedBigInteger('courseId');
             $table->integer('number');
             $table->timestamps();
+            $table->foreign('courseId')->references('courseId')->on('course')->onDelete('casecade');
               });
     }
 

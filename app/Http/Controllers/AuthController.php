@@ -42,9 +42,9 @@ class AuthController extends Controller
             'name.required' => 'حقل الاسم مطلوب',
             'userName.required' => 'حقل اسم المستخدم مطلوب',
             'salary.required' => 'حقل الراتب مطلوب',
-            // 'imageIdentity.required' => 'حقل صورة الهوية مطلوب',
+            'imageIdentity.required' => 'حقل رقم الهوية مطلوب',
+            'imageIdentity.numeric' => 'يجب أن يكون رقم الهوية أرقام فقط',
             'salary.numeric' => 'الراتب يجب أن يكون رقم',
-            'workTime.required' => 'حقل أوقات الدوام  مطلوب',
             'password.min' => "يجب أن تتألف كلمة السر من 8 محارف على الأقل",
             'email.email' => 'حقل الايميل يجب أن يحوي على ايميل فقط',
             'address.required' => 'حقل العنوان   مطلوب',
@@ -57,8 +57,7 @@ class AuthController extends Controller
             "userName" => "required",
             "phoneNumber" => "required|numeric|starts_with:09",
             "salary" => "required|numeric",
-            // "imageIdentity" => "required",
-            "workTime" => "required",
+            "imageIdentity" => "required|numeric",
             "address" => "required",
             "roles" => "required|array",
             "password" => "required|min:8",
@@ -88,7 +87,7 @@ class AuthController extends Controller
         }
         $u = User::where('imageIdentity', $request->imageIdentity)->get()->first();
         if ($u) {
-            return response(["message" => "لا يمكن تكرار صورة الهوية لأكثر من حساب"]);
+            return response(["message" => "لا يمكن تكرار رقم الهوية لأكثر من حساب"]);
         }
         if ($request->email) {
             $u = User::where('email', $request->email)->get()->first();
@@ -110,11 +109,11 @@ class AuthController extends Controller
                 return response(["message" => " حقل " . $tableColumns[$i]->arabicName . " مطلوب "]);
             }
         }
-        $FileName = $request->imageIdentity;
-        if ($request->hasFile('imageIdentity')) {
-            $FileName =  $request->imageIdentity->getClientOriginalName();
-            Storage::disk('public')->putFileAs('/images', $request->imageIdentity, $FileName);
-        }
+        // $FileName = $request->imageIdentity;
+        // if ($request->hasFile('imageIdentity')) {
+        //     $FileName =  $request->imageIdentity->getClientOriginalName();
+        //     Storage::disk('public')->putFileAs('/images', $request->imageIdentity, $FileName);
+        // }
         $tableColumns = tableColumns::where('tableId', $userTable->tableId)->where('columnType', 'إضافية')->get();
         for ($i = 0; $i < sizeof($tableColumns); $i++) {
             if ($request[$tableColumns[$i]->EnglishName]) {
@@ -128,7 +127,7 @@ class AuthController extends Controller
             'phoneNumber' => $request->phoneNumber,
             'salary' => $request->salary,
             'userName' => $request->userName,
-            'imageIdentity' =>  $request->phoneNumber,
+            'imageIdentity' =>  $request->imageIdentity,
             'accountStatus' => "موظف",
             'workTime' => $request->workTime,
             'address' => $request->address,

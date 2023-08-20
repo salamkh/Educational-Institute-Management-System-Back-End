@@ -353,7 +353,7 @@ class accountsManagement extends Controller
                 $user->password = bcrypt($request->password);
                 $user->update();
             }
-        $user->update($request->except(['accountStatus', 'password']));
+        $user->update($request->except(['accountStatus', 'password','imageIdentity']));
         $tableColumns = tableColumns::where('tableId',$dynamicTable->tableId)->where("columnType","إضافية")->get();
         for($i=0;$i<sizeof($tableColumns);$i++){
             if($request[$tableColumns[$i]->EnglishName]){

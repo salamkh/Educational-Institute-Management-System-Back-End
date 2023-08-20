@@ -243,9 +243,8 @@ class StudentController extends Controller
                 $evaluation = Evaluation::where('studentId', $id)->where('courseId', $student[$i]->courseId)->get()->first();
                 if ($evaluation) {
                     $course[$i]->behavior =  $evaluation->behavior;
-                    $course[$i]->cause =  $evaluation->cause;
-                    $teacher = teacher::find($evaluation->teacherId);
-                    $teacher = User::find($teacher->userId);
+                    $course[$i]->cause =  $evaluation->cause;                    
+                    $teacher = User::find($evaluation->userId);
                     $course[$i]->teacher = $teacher->name;
                     $course[$i]->value =  $evaluation->value;
                 }
@@ -295,7 +294,13 @@ class StudentController extends Controller
     {
 
         $student = Student::where('studentId', $id)->get()->first();
-        $student->update($request->all());
+        $student->password= bcrypt($request->password);
+        $student->myStatus= $request->myStatus;
+        $student->gender= $request->gender;
+        $student->address= $request->address;
+        $student->phone= $request->phone;
+        $student->birthdate= $request->birthdate;
+        $student->name= $request->name;
         $student->save();
 
         return response([
@@ -512,7 +517,7 @@ class StudentController extends Controller
                 $j++;
             }
         }
-        if ($students && !$students[$j]) {
+        if ($students && sizeof($students) < $j) {
             array_pop($students);
         }
         if (!$students) {

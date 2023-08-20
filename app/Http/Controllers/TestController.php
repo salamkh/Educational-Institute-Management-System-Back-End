@@ -22,7 +22,7 @@ class TestController extends Controller
         if (!$test) {
             $test = new Test();
             $test->sessionId = $request->sessionId;
-            $test->userId = $user ->userId;
+            $test->userId = $user->userId;
             $test->studentId = $request->studentId;
             $test->value = $request->value;
             $test->cause = $request->cause;
@@ -38,15 +38,26 @@ class TestController extends Controller
             $test->save();
         }
 
-        $evaluation = Evaluation::where('courseId', $request->courseId)->where('studentId', $request->studentId)->get();
+        $evaluation = Evaluation::where('courseId', $request->courseId)->where('studentId', $request->studentId)->get()->first();
         $tests = Test::where('courseId',  $request->courseId)->where('studentId', $request->studentId)->get();
         $testValue = 0;
         for ($i = 0; $i < sizeof($tests); $i++) {
             $testValue = $testValue + $tests[$i]->value;
         }
         $testValue = $testValue / sizeof($tests);
-        $evaluation->value = $testValue;
-        $evaluation->save();
+        if ($evaluation) {
+            $evaluation->value = $testValue;
+            $evaluation->save();
+        } else {
+            $evaluation = new Evaluation();
+            $evaluation->studentId = $request->studentId;
+            $evaluation->userId = $user->userId;
+            $evaluation->courseId = $request->courseId;
+            $evaluation->behavior = "جيد";
+            $evaluation->cause = "جيد";
+            $evaluation->value = $testValue;
+            $evaluation->save();
+        }
         return response(
             [
                 'message' => 'تمت إضافة التسميع بنجاح',
@@ -212,7 +223,9 @@ class TestController extends Controller
         $sessions = Session::where('courseId', $courseId)->get();
         if (!$sessions) {
             $array = [];
-            return response($array);
+            return response([
+                'Tests' => $array,
+            ]);
         }
         for ($i = 0; $i < sizeof($sessions); $i++) {
             $monitoring = sessionStudentMonitoring::where('sessionId', $sessions[$i]->sessionId)->where('studentId', $studentId)->get()->first();

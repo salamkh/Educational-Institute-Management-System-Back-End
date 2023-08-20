@@ -17,23 +17,15 @@ class CreateSessionStudentMonitoring extends Migration
             $table->bigIncrements('sessionStudentMonitoringId');
             $table->unsignedBigInteger('sessionId');
             $table->unsignedBigInteger('studentId');
-            $table->unsignedBigInteger('courseId');
             $table->set('studentStatus', ['حضور','غياب']);
             $table->foreign('studentId')
                 ->references('studentId')
                 ->on('student')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-
             $table->foreign('sessionId')
                 ->references('sessionId')
                 ->on('session')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-
-            $table->foreign('courseId')
-                ->references('courseId')
-                ->on('course')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->timestamps();

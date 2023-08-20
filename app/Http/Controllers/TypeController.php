@@ -28,14 +28,14 @@ class TypeController extends Controller
             ]);
             if ($financialAccount) {
                 $typeAccount = new financialTypeAccount();
-                $typeAccount->typeId = $request->typeId;
+                $typeAccount->typeId = $type;
                 $typeAccount->FAId = $financialAccount;
                 $typeAccount->save();
                 DB::commit();
             } else {
                 DB::rollBack();
             }
-
+            $type = type::find($type);
             return response(
                 [
                     'Type' => $type,

@@ -41,7 +41,7 @@ class SessionController extends Controller
             $sessionCost = new sessionCost();
             $courseStuNo = corusestuno::where('courseId', $request->courseId)->orderBy("created_at")->get();
             for ($i = sizeof($courseStuNo) - 1; $i >= 0; $i--) {
-                if (strtotime(date("Y-m-d", strtotime($courseStuNo[$i]->created_at))) <= strtotime(date("Y-m-d", strtotime($request->date)))) {
+                if (date("Y-m-d", strtotime($courseStuNo[$i]->created_at)) <= date("Y-m-d", strtotime($request->date))) {
                     $sessionCost->sessionId = $sessionId;
                     $sessionCost->cost = $request->cost;
                     $sessionCost->studentNumber = $courseStuNo[$i]->number;
@@ -92,14 +92,14 @@ class SessionController extends Controller
              else {
                 return response(["message" => "فشل إضافة الجلسة يجب إدخال قيمة مستحقات الاستاذ بسبب عدم وجود خطة لحساب الكلفة"]);
             }
-            return response(
-                [
-                    'Session' => $session,
-                    'message' => 'تمت إضافة الجلسة بنجاح',
-                ],
-                200
-            );
         }
+        return response(
+            [
+                'Session' => $session,
+                'message' => 'تمت إضافة الجلسة بنجاح',
+            ],
+            200
+        );
     }
     public function show($id)
     {

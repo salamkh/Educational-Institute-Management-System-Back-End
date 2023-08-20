@@ -14,6 +14,7 @@ use App\Models\Type;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+
 class EvaluationController extends Controller
 {
 
@@ -33,12 +34,18 @@ class EvaluationController extends Controller
             $tests = Test::where('courseId', $request->courseId)
                 ->where('studentId', $request->studentId)->get();
             $testValue = 0;
-            for ($i = 0; $i < sizeof($tests); $i++) {
-                $testValue = $testValue + $tests[$i]->value;
+
+            if ($tests) {
+                for ($i = 0; $i < sizeof($tests); $i++) {
+                    $testValue = $testValue + $tests[$i]->value;
+                }
+                $testValue = $testValue / sizeof($tests);
+                $evaluation->value = $testValue;
+                $evaluation->save();
+            } else {
+                $evaluation->value = 0;
+                $evaluation->save();
             }
-            $testValue = $testValue / sizeof($tests);
-            $evaluation->value = $testValue;
-            $evaluation->save();
         } else {
             $evaluation->update($request->all());
             $evaluation->save();

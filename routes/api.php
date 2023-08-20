@@ -142,8 +142,7 @@ Route::get('/getSubjectsTeacher/{sujectId}', [subjectsController::class, 'getSub
 //___________________________Course requests________________________________
 Route::post('/createCourse', [CourseController::class, 'create'])
     ->middleware('jwt_aut')->middleware('createCourse');;
-Route::get('/showCourse/{id}', [CourseController::class, 'show'])
-    ->middleware('jwt_aut')->middleware('displayCourse');
+Route::get('/showCourse/{id}', [CourseController::class, 'show']);
 Route::get('/showAllCourse', [CourseController::class, 'showAllCourse'])
     ->middleware('jwt_aut')->middleware('displayCourse');
 Route::get('/showAllEnableCourse', [CourseController::class, 'showAllEnableCourse'])
@@ -166,8 +165,7 @@ Route::post('/startCourse/{id}', [CourseController::class, 'startCourse'])
 Route::post('/createStudent', [StudentController::class, 'create'])
     ->middleware('jwt_aut')->middleware('createStudent');
 
-Route::post('/logInStudent', [studentAuth::class, 'studentLogin'])
-    ->middleware('jwt_aut')->middleware('createStudent');
+Route::post('/logInStudent', [studentAuth::class, 'studentLogin']);
 
 Route::post('/addStudentToCourse', [StudentController::class, 'addStudentToCourse'])
     ->middleware('jwt_aut')->middleware('createStudent');
@@ -253,14 +251,12 @@ Route::get('/sortAllStudentsEvaluationInCourse/{courseId}', [EvaluationControlle
 Route::post('/createAdvertisment', [AdvertismentController::class, 'create'])
     ->middleware('jwt_aut')->middleware('createAdvertisment');
 
-Route::get('/showAdvertisment/{id}', [AdvertismentController::class, 'show'])
-    ->middleware('jwt_aut')->middleware('showAdvertisment');
+Route::get('/showAdvertisment/{id}', [AdvertismentController::class, 'show']);
 
 Route::post('/editeAdvertisment/{id}', [AdvertismentController::class, 'edit'])
     ->middleware('jwt_aut')->middleware('editeAdvertisment');
 
-Route::get('/showAllAdvertisment', [AdvertismentController::class, 'showAllAdvertisment'])
-    ->middleware('jwt_aut')->middleware('showAllAdvertisment');
+Route::get('/showAllAdvertisment', [AdvertismentController::class, 'showAllAdvertisment']);
 
 Route::post('/deleteAdvertisment/{id}', [AdvertismentController::class, 'destroy'])
     ->middleware('jwt_aut')->middleware('deleteAdvertisment');

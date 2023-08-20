@@ -11,7 +11,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class displayCourse
 {
-    use User_roles,userAuthorizations;
+    use User_roles, userAuthorizations;
 
     /**
      * Handle an incoming request.
@@ -22,15 +22,23 @@ class displayCourse
      */
     public function handle(Request $request, Closure $next)
     {
+        $user = auth()->guard('studentapi')->user();
+        $id = $request->route('id');
+        if ($user) {
+            if ($user->studentId == $id) {
+                return $next($request);
+            } else {
+                return response(["message" => "ليس لديك صلاحيات"]);
+            }
+        }
         $hr = $this->isHR();
         $manager = $this->isManager();
-        $teacher=$this->isTeacher($request);
+        $teacher = $this->isTeacher($request);
         $displayCourse = $this->displayCourse();
 
-        if($hr||$manager||$displayCourse||$teacher)
-        {
+        if ($hr || $manager || $displayCourse || $teacher) {
             return $next($request);
         }
-        return response (["message"=>"ليس لديك صلاحيات"]);
+        return response(["message" => "ليس لديك صلاحيات"]);
     }
 }

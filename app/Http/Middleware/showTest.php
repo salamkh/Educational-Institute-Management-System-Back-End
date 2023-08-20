@@ -22,11 +22,20 @@ class showTest
      */
     public function handle(Request $request, Closure $next)
     {
-        $showTest=$this->showTest();
+        $user = auth()->guard('studentapi')->user();
+        $id = $request->route('studentId');
+        if($user){
+            if($user->studentId==$id)
+            {return $next($request);}
+            else{
+                return response (["message"=>"ليس لديك صلاحيات"]);
+            }
+        }
         $HR= $this->isHR();
         $manager = $this->isManager();
+        $showTest=$this->showTest();
         $teacher=$this->isTeacher($request);
-        if($HR||$manager||$showTest)
+        if($HR||$manager||$showTest||$teacher)
         {
             return $next($request);
         }
